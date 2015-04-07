@@ -1,6 +1,8 @@
 # workshop_bots
 A repository for an upcoming D-Lab workshop on Twitter bots.
 
+We've created a shared account: https://twitter.com/tob_pohskrow
+
 ## Goals
 Participants will gain a general understanding of bots and why and when they can be useful, APIs (Twitter, specifically), and how to write a simple bot using Python. We will cover JSON and explain the data they can expect to see associated with each tweet. The workshop will be hands-on. Participants will modify provided code to search for tweets that interest them.
 
