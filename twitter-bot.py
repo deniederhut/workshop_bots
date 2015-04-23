@@ -25,7 +25,17 @@
 # 
 # At the D-Lab, we pull training/workshop information from our calendar, generate a tweet, and post it to the @DLabAtBerkeley account. We're trying to add more functionality, such as including instructor usernames in the tweets or processing the descriptions and titles to come up with a short, descriptive summary.
 # 
+# A team of researchers led by Jacob Eisenstein used a bot to collect 107 million tweets, which were then used ot track the diffusion of linguistic variants across the United States.
+# 
+# ![Figure1](https://d262ilb51hltx0.cloudfront.net/max/800/1*mlnsT2x2SL-e7JMo3HpWFg.png)
+# 
 # There are lots of people doing interesting things with bots on Twitter. For inspiration, see: http://qz.com/279139/the-17-best-bots-on-twitter/.
+# 
+# Both of the world's most famous vocab-limited characters have Twitter accounts that reply with their catchphrases to anyone who mentions their name.
+# 
+# [Hodor](https://twitter.com/hodorhodorhodor)
+# 
+# [Groot](https://twitter.com/GrootBot)
 # 
 # ### How can you do it?
 # Read on.
@@ -369,7 +379,7 @@ print r.status_code
 for item in r:
     filename = r['id_str'] + '.json'
     with open(filename,'w') as f:
-        f.write(item)
+        json.dump(item,f)
 
 
 # Note: if you are doing a lot of these, it will be faster and easier to use a non-relational database like MongoDB
@@ -380,15 +390,7 @@ for item in r:
 
 # In[ ]:
 
-from TwitterAPI import TwitterAPI
 import time
-
-consumer_key = '9cQ7SNtWsmTTfta8Gv5y8svWD'
-consumer_secret = 'kjJllUPEJefFQ4Dfr6dBXDETiQaVWFXTt0zLSNMy8tY8F8IpqK'
-access_token_key = '3129088320-dIfoDZOt5cIKVCFnJpS0krt3oCYPB13rk5ITavI'
-access_token_secret = 'H41REM344zgKCvJenCGGsF1JbFSK8I1r1WvFrc8Fs74jg'
-
-api = TwitterAPI(consumer_key, consumer_secret, access_token_key, access_token_secret)
 
 r = api.request('search/tweets', {'q':'accepted berkeley'})
 for item in r.get_iterator():
@@ -410,8 +412,9 @@ for item in r.get_iterator():
 # In[ ]:
 
 # That thing after crontab is a lowercase L even though it looks like a 1
-# This will execute directly through your shell, so use with caution
-get_ipython().system(u'crontab -l | { cat; echo "0 * * * * python twitter_bot.py"; } | crontab -')
+# This will execute directly through your shell, so use at your own risk
+# Make sure you replace the <> with the file path
+get_ipython().system(u'crontab -l | { cat; echo "0 * * * * python <absolute path to>twitter_bot.py"; } | crontab -')
 
 
 # If you are using a mac (especially Mavericks or newer), Apple prefers that you use their init library, called `launchd`. `launchd` is a bit more complicated, and requires that you create an xml document that will be read by Apple's init service:
@@ -441,7 +444,9 @@ get_ipython().system(u'crontab -l | { cat; echo "0 * * * * python twitter_bot.py
 
 # ## Now it is time for you to make your own twitter bot!
 # 
-# To get you started, here is a template in python. You should modify the search parameters and post parameters to get the bot to act the way you want.
+# To get you started, here is a template in python. You should modify the search parameters and post parameters to get the bot to act the way you want. 
+# 
+# You might find it easier to copy this out of the notebook into a python script and run it from your terminal.
 
 # In[ ]:
 
@@ -474,6 +479,24 @@ def main():
 if __name__ == 'main':
     main()
 
+
+# You can see an example of how to set conditions and search parameters [in the code](https://github.com/deniederhut/city_mood/blob/master/city_mood.py) that powers the [berkeleymood Twitter bot](https://twitter.com/BerkeleyMood)
+# 
+# If you have tried to run this, or some of the earlier code in this notebook, you have probably encountered some of Twitter's error codes. Here are the most common, and why you are triggering them.
+# 
+# 1. `400 = bad request` - This means the API (middleman) doesn't like how you formatted your request. Check the API documentation to make sure you are doing things correctly.
+# 
+# 2. `401 = unauthorized` - This either means you entered your auth codes incorrectly, or those auth codes don't have permission to do what you're trying to do. It takes Twitter a while to assign posting rights to your auth tokens after you've given them your phone number. If you have just done this, wait five minutes, then try again.
+# 
+# 3. `403 = forbidden` - Twitter won't let you post what you are trying to post, most likely because you are trying to post the same tweet twice in a row within a few minutes of each other. Try changing your status update. If that doesn't fix it, then you are either:
+# 
+#     A. Hitting Twitter's daily posting limit. They don't say what this is.
+#         
+#     B. Trying to follow too many people, rapidly following and unfollowing the same person, or are otherwise making Twitter think you are a spambot
+# 
+# 4. `420 = enhance your calm` - Simultaneously a joke about [San Rafael High students](http://www.huffingtonpost.com/2010/04/20/420-meaning-the-true-stor_n_543854.html) and [Sylverster Stallone's prescient film about the future](https://youtu.be/YnSIOlF132w), it has been deprecated in favor of:
+# 
+# 5. `429 = too many requests` - This means that you have exceeded Twitter's rate limit for whatever it is you are trying to do. Increase your  `time.sleep()`  value.
 
 # In[ ]:
 
